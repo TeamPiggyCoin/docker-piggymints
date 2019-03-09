@@ -1,0 +1,24 @@
+#!/bin/sh
+exec 2>&1
+
+if [ ! -n "$(grep piggycoind /etc/hosts)" ]; then
+  echo "127.0.0.1 piggycoind" >> /etc/hosts
+fi
+
+cd /root/.newpiggycoin/
+if [ ! -e /root/.newpiggycoin/config.py ]; then
+  cp $APP_DIR/config.py.example /root/.newpiggycoin/config.py
+  rm -f /root/.newpiggycoin/server.pem
+  rm -f /root/.newpiggycoin/server.cert
+  openssl req -new -newkey rsa:1024 -days 365 -nodes -x509 -keyout server.pem -out server.cert -subj "/O=PiggyCoin/OU=PiggyMints"
+fi
+
+rm -f $APP_DIR/config.py
+ln -sf /root/.newpiggycoin/config.py $APP_DIR/config.py
+rm -f $APP_DIR/server.pem
+ln -sf /root/.newpiggycoin/server.pem $APP_DIR/server.pem
+rm -f $APP_DIR/server.cert
+ln -sf /root/.newpiggycoin/server.cert $APP_DIR/server.cert
+
+cd $APP_DIR
+/usr/bin/python3 main.py
