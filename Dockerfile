@@ -19,4 +19,5 @@ RUN chmod a+x /etc/service/piggymints/run
 
 EXPOSE 8338 54481
 VOLUME /root/.newpiggycoin
+WORKDIR /root/.newpiggycoin
 ENTRYPOINT ["/sbin/runit-docker"]
